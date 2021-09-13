@@ -14,6 +14,18 @@ class Post extends Model
 
     protected $fillable = ['title', 'content', 'image'];
 
+    public static function boot()
+    {
+        parent::boot();
+
+        // Pendant la création du post
+        // On associe au post le user_id et la category_id
+        self::creating(function ($post) {
+            $post->user()->associate(auth()->user()->id);
+            $post->category()->associate(request()->category);
+        });
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class);

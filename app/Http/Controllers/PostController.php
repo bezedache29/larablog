@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Post;
+use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\StorePostRequest;
 
 class PostController extends Controller
 {
@@ -19,7 +22,7 @@ class PostController extends Controller
         // Cela permet d'optimiser le nombre de requêtes a faire au serveur pour recupérer la catégorie de chaque post
         // $posts = Post::with('category')->get();
 
-        $posts = Post::with('category', 'user')->get();
+        $posts = Post::with('category', 'user')->latest()->get();
 
         return view('posts.index', compact('posts'));
     }
@@ -31,7 +34,9 @@ class PostController extends Controller
      */
     public function create()
     {
-        //
+        $categories = Category::all();
+
+        return view('posts.create', compact('categories'));
     }
 
     /**
@@ -40,9 +45,17 @@ class PostController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StorePostRequest $request)
     {
-        //
+        $imageName = $request->image->store('posts');
+
+        Post::create([
+            'title' => $request->title,
+            'content' => $request->content,
+            'image' => $imageName
+        ]);
+
+        return redirect()->route('dashboard')->with('success', 'Votre post a bien été créé');
     }
 
     /**
