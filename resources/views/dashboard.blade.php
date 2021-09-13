@@ -42,14 +42,23 @@
                                     </td>
                                     <td class="px-2 py-4 border border-gray-400">{{ Str::limit(ucfirst($post->content), 40) }}</td>
                                     <td class="px-2 py-4 text-center">
-                                        <a href="{{ route('posts.edit', $post) }}" class="p-2 text-white bg-yellow-500 rounded-md hover:bg-yellow-400">
+                                        <a href="{{ route('posts.edit', $post) }}" 
+                                        class="p-2 text-white bg-yellow-500 rounded-md hover:bg-yellow-400">
                                             Modifier
                                         </a>
                                     </td>
                                     <td class="px-2 py-4 text-center">
-                                        <a href="{{ route('posts.destroy', $post) }}" class="p-2 text-white bg-red-500 rounded-md hover:bg-red-400">
-                                            Supprimer
-                                        </a>
+                                        <form action="{{ route('posts.destroy', $post) }}" method="POST" id="destroy-post-form">
+                                            @csrf
+                                            @method('delete')
+                                            <button 
+                                            class="p-2 text-white bg-red-500 rounded-md hover:bg-red-400"
+                                            onclick="event.preventDefault
+                                                    document.querySelector('#destroy-post-form').submit()
+                                            ">
+                                                Supprimer
+                                            </button>
+                                        </form>
                                     </td>
                                 </tr>
                             @endforeach

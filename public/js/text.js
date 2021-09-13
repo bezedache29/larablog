@@ -1,4 +1,5 @@
 const variable = 1
+let other = 2
 
 if (variable != 3) {
   console.log('pas bon')

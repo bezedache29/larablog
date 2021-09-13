@@ -6,6 +6,7 @@ use App\Models\Post;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use App\Http\Requests\StorePostRequest;
 
 class PostController extends Controller
@@ -77,6 +78,10 @@ class PostController extends Controller
      */
     public function edit(Post $post)
     {
+        if (! Gate::allows('admin-post', $post)) {
+            abort(403);
+        }
+        
         $categories = Category::all();
 
         // $post = Post::with('category')->whereHas('user', function ($query) {
@@ -128,6 +133,12 @@ class PostController extends Controller
      */
     public function destroy(Post $post)
     {
-        //
+        if (! Gate::allows('admin-post', $post)) {
+            abort(403);
+        }
+
+        $post->delete();
+
+        return redirect()->route('dashboard')->with('success', 'Votre post a bien été supprimé');
     }
 }
