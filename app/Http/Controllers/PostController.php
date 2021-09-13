@@ -14,9 +14,14 @@ class PostController extends Controller
      */
     public function index()
     {
-        $posts = Post::all();
+        // $posts = Post::all();
 
-        return view('posts.index');
+        // Cela permet d'optimiser le nombre de requêtes a faire au serveur pour recupérer la catégorie de chaque post
+        // $posts = Post::with('category')->get();
+
+        $posts = Post::with('category', 'user')->get();
+
+        return view('posts.index', compact('posts'));
     }
 
     /**
