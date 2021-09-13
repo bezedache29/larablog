@@ -41,7 +41,7 @@
                                     </p>
                                 </div>
                                 <div class="flex items-center justify-between mt-4">
-                                    <a href="#"
+                                    <a href="{{ route('posts.show', $post->id) }}"
                                         class="text-blue-500 hover:underline">
                                         Voir plus
                                     </a>

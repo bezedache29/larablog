@@ -23,11 +23,28 @@ class StorePostRequest extends FormRequest
      */
     public function rules()
     {
+        // On check si on cré un post ou si on l'edit
+        // A la création l'image est obligatoire
+        // A la modification elle ne l'est pas
+        if (request()->routeIs('posts.store')) {
+            $imageRule = 'image|required';
+        } else if (request()->routeIs('posts.update')) {
+            $imageRule = 'image|sometimes';
+        }
+
         return [
             'title' => 'required',
             'content' => 'required',
-            'image' => 'image|required',
+            'image' => $imageRule,
             'category' => 'required'
         ];
+    }
+
+    protected function prepareForValidation()
+    {
+        // Pendant la validation s'il n'y a pas d'image on retire la validation image de la regle de validation
+        if ($this->image == null) {
+            $this->request->remove('image');
+        }
     }
 }

@@ -66,7 +66,7 @@ class PostController extends Controller
      */
     public function show(Post $post)
     {
-        //
+        return view('posts.show', compact('post'));
     }
 
     /**
@@ -77,7 +77,16 @@ class PostController extends Controller
      */
     public function edit(Post $post)
     {
-        //
+        $categories = Category::all();
+
+        // $post = Post::with('category')->whereHas('user', function ($query) {
+        //     return $query->where('user_id', auth()->user()->id);
+        // })->first();
+
+        // Possible depuis laravel 8.57 et plus opti
+        $post = Post::with('category')->whereRelation('user', 'user_id', auth()->user()->id)->first();
+
+        return view('posts.edit', compact('post', 'categories'));
     }
 
     /**
@@ -87,9 +96,28 @@ class PostController extends Controller
      * @param  \App\Models\Post  $post
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Post $post)
+    public function update(StorePostRequest $request, Post $post)
     {
-        //
+        $data = [
+            'title' => $request->title,
+            'content' => $request->content
+        ];
+
+        // S'il y a un update d'image
+        if ($request->image != null) {
+
+            $imageName = $request->image->store('posts');
+
+            // On merge le tableau $data avec celui de l'image
+            $data = array_merge($data, [
+                'image' => $imageName
+            ]);
+
+        }
+
+        $post->update($data);
+
+        return redirect()->route('dashboard')->with('success', 'Votre post a bien été modifié');
     }
 
     /**
